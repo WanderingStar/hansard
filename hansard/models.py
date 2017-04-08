@@ -41,8 +41,7 @@ class MP(Base):
     debates = relationship('Debate',
                             secondary=debate_mps_association,
                             back_populates='mps')
-    #spoken_contribution_id = Column('spoken_contribution', Integer, ForeignKey('spoken_contributions.id'))
-    #spoken_contributions = relationship('SpokenContribution', back_populates='mp', foreign_keys=ForeignKey('spoken_contributions.id'))
+    spoken_contributions = relationship('SpokenContribution', back_populates='mp')
     party_id = Column('party', Integer, ForeignKey('parties.id'))
     party = relationship("Party", back_populates='mps')
 
@@ -58,20 +57,20 @@ class Debate(Base):
     mps = relationship("MP",
                         secondary=debate_mps_association,
                         back_populates="debates")
-    # spoken_contributions = relationship('SpokenContribution',
-    #                                     back_populates='debates')
+    spoken_contributions = relationship('SpokenContribution',
+                                         back_populates='debate')
 
-# class SpokenContribution(Base):
-#     __tablename__ = 'spoken_contributions'
-#
-#     id = Column(Integer, primary_key=True)
-#     contribution_id = Column(String)
-#     text = Column(String)
-#     time = Column(DateTime)
-#     mp_id = Column('mp', Integer, ForeignKey('mps.id'))
-#     #mp = relationship("MP", back_populates="spoken_contributions")
-#     debate_id = Column('debate', Integer, ForeignKey('debates.id'))
-#     debate = relationship("Debate", back_populates="spoken_contributions")
+class SpokenContribution(Base):
+    __tablename__ = 'spoken_contributions'
+
+    id = Column(Integer, primary_key=True)
+    contribution_id = Column(String)
+    text = Column(String)
+    time = Column(DateTime)
+    mp_id = Column('mp', Integer, ForeignKey('mps.id'))
+    mp = relationship("MP", back_populates="spoken_contributions")
+    debate_id = Column('debate', Integer, ForeignKey('debates.id'))
+    debate = relationship("Debate", back_populates="spoken_contributions")
 
 class Party(Base):
     __tablename__ = 'parties'
@@ -92,6 +91,7 @@ def main():
                party=labour)
     budget = Debate(debate_name='budget')
     budget.mps = [abbot]
+    contrib = SpokenContribution(mp=abbot, text="Hear", debate=budget)
     session.add(labour)
     session.commit()
 

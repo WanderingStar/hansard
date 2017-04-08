@@ -41,7 +41,8 @@ class MP(Base):
     debates = relationship('Debate',
                             secondary=debate_mps_association,
                             back_populates='mps')
-    spoken_contributions = relationship('SpokenContribution', back_populates='mp')
+    spoken_contributions = relationship('SpokenContribution',
+                                         back_populates='mp')
     party_id = Column('party', Integer, ForeignKey('parties.id'))
     party = relationship("Party", back_populates='mps')
 
